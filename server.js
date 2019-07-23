@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
-const validTypes = require('./types');
 const cors = require('cors');//npm i cors
 const helmet = require('helmet');//npm i helmet
 
@@ -16,6 +15,9 @@ app.use(morgan(morganSetting));
 
 app.use(helmet()); //Make sure to place helmet before cors in the pipeline.
 app.use(cors());
+
+const validTypes = ['Bug', 'Dark', 'Dragon', 'Electric', 'Fairy', 'Fighting', 'Fire', 'Flying', 'Ghost', 'Grass', 'Ground', 'Ice', 'Normal', 'Poison', 'Psychic', 'Rock', 'Steel', 'Water'];
+
 
 
 //~~~~~function to get the types of pokemon~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -48,16 +50,16 @@ app.get('/pokemon', function handleGetPokemon(req, res) {
 app.use(function validateBearerToken(req, res, next) {
   const apiToken = process.env.API_TOKEN;
   const authToken = req.get('Authorization');
-  
+
   if (!authToken || authToken.split(' ')[1] !== apiToken) {
     return res.status(401).json({ error: 'Unauthorized request' });
   }
-  
+
   // move to the next middleware
   next(); //callback at the end of the middleware to move to the next middleware in the pipeline. 
   //If we were to not invoke this next callback, the request would hang and we wouldn't see a response until there was a timeout.
 });
-  
+
 //hide sensitive error messages using below middleware . should be the LAST middleware in pipeline
 // 4 parameters in middleware, express knows to treat this as error handler
 app.use((error, req, res, next) => {
